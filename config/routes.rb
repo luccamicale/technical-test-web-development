@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
   resources :search_results
-  resources :keywords
-  devise_for :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  
+  resources :keywords do
+    collection { post :import }
+  end
 
-  # Redirige la raíz a la página de inicio de sesión
-  root to: "home#index"
-  # Defines the root path route ("/")
-  
+  devise_for :users
+
+  authenticated :user do
+    root to: "home#index", as: :authenticated_root
+    post 'home/import', to: 'home#import', as: :import_home
+  end
+
+  root to: redirect('/users/sign_in')
 end

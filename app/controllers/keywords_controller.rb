@@ -1,70 +1,38 @@
+# app/controllers/keywords_controller.rb
 class KeywordsController < ApplicationController
-  before_action :set_keyword, only: %i[ show edit update destroy ]
+  before_action :set_keyword, only: %i[show edit update destroy]
+  before_action :authenticate_user!, only: [:import]
 
-  # GET /keywords or /keywords.json
+  # ... Otras acciones del controlador ...
+
+  # Acción para importar palabras clave desde un archivo CSV
+
   def index
     @keywords = Keyword.all
   end
 
-  # GET /keywords/1 or /keywords/1.json
-  def show
-  end
-
-  # GET /keywords/new
   def new
     @keyword = Keyword.new
   end
+  
 
-  # GET /keywords/1/edit
-  def edit
-  end
+  def import
+    uploaded_file = params[:file]
 
-  # POST /keywords or /keywords.json
-  def create
-    @keyword = Keyword.new(keyword_params)
+    # Lógica para procesar el archivo CSV y guardar las palabras clave
+    Keyword.import(uploaded_file, current_user.id)
 
-    respond_to do |format|
-      if @keyword.save
-        format.html { redirect_to keyword_url(@keyword), notice: "Keyword was successfully created." }
-        format.json { render :show, status: :created, location: @keyword }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @keyword.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /keywords/1 or /keywords/1.json
-  def update
-    respond_to do |format|
-      if @keyword.update(keyword_params)
-        format.html { redirect_to keyword_url(@keyword), notice: "Keyword was successfully updated." }
-        format.json { render :show, status: :ok, location: @keyword }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @keyword.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /keywords/1 or /keywords/1.json
-  def destroy
-    @keyword.destroy
-
-    respond_to do |format|
-      format.html { redirect_to keywords_url, notice: "Keyword was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to keywords_path, notice: 'CSV file imported successfully.'
+  rescue StandardError => e
+    redirect_to keywords_path, alert: "Error importing CSV file: #{e.message}"
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_keyword
-      @keyword = Keyword.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def keyword_params
-      params.require(:keyword).permit(:user_id, :keyword)
-    end
+  # ... Métodos privados existentes ...
+
+  # Utilidad para configurar la palabra clave por ID
+  def set_keyword
+    @keyword = Keyword.find(params[:id])
+  end
 end
