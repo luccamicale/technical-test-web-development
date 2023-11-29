@@ -1,0 +1,42 @@
+<%= form_with(model: search_result) do |form| %>
+  <% if search_result.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(search_result.errors.count, "error") %> prohibited this search_result from being saved:</h2>
+
+      <ul>
+        <% search_result.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :keyword_id, style: "display: block" %>
+    <%= form.text_field :keyword_id %>
+  </div>
+
+  <div>
+    <%= form.label :adwords_advertisers, style: "display: block" %>
+    <%= form.number_field :adwords_advertisers %>
+  </div>
+
+  <div>
+    <%= form.label :total_links, style: "display: block" %>
+    <%= form.number_field :total_links %>
+  </div>
+
+  <div>
+    <%= form.label :total_results, style: "display: block" %>
+    <%= form.text_field :total_results %>
+  </div>
+
+  <div>
+    <%= form.label :html_code, style: "display: block" %>
+    <%= form.text_area :html_code %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
